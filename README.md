@@ -1,5 +1,5 @@
 # university-notice-board
-# University Notice Board
+
 
 A full-stack web application designed to digitize campus communications, manage student assignments, and track academic events.
 
