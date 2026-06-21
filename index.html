@@ -1,0 +1,757 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DPGU Notice Board</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="style.css" />
+    <link
+      href="https://cdn.quilljs.com/1.3.6/quill.snow.css"
+      rel="stylesheet"
+    />
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <link rel="apple-touch-icon" href="logo-192.png" />
+  </head>
+  <body>
+    <div id="sidebar-overlay" class="sidebar-overlay"></div>
+    <button id="hamburger-btn" class="hamburger-btn">☰</button>
+
+    <div class="container">
+      <nav class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+          <img src="logo.png" alt="DPGU Logo" />
+        </div>
+
+        <div class="sidebar-menu">
+          <div
+            id="sidebar-user-profile"
+            class="user-profile-card hidden"
+            title="Go to Dashboard"
+          >
+            <div class="user-avatar" id="user-avatar-initial">?</div>
+            <div class="user-info">
+              <span id="user-profile-name" class="user-name">Loading...</span>
+              <span id="user-profile-role" class="user-role">Guest</span>
+            </div>
+          </div>
+
+          <div class="sidebar-category-title" style="margin-top: 10px">
+            Categories
+          </div>
+          <a href="#" class="sidebar-filter active" data-category="All"
+            >📁 All Notices</a
+          >
+          <a href="#" class="sidebar-filter" data-category="Urgent"
+            >🚨 Urgent</a
+          >
+          <a href="#" class="sidebar-filter" data-category="Event">📅 Event</a>
+          <a href="#" class="sidebar-filter" data-category="Syllabus"
+            >📚 Academics</a
+          >
+          <a href="#" class="sidebar-filter" data-category="Sports and Play"
+            >🏏 Sports and Play</a
+          >
+          <a href="#" class="sidebar-filter" data-category="Cultural Function"
+            >💃 Cultural Function</a
+          >
+          <a
+            href="#"
+            class="sidebar-filter"
+            data-category="Assignment"
+            style="display: none"
+            >📝 Assignments</a
+          >
+          <a href="#" class="sidebar-link" id="nav-vault">📁 My resources</a>
+
+          <div class="sidebar-category-title" style="margin-top: 20px">
+            Portal
+          </div>
+          <a href="#" class="sidebar-link" id="nav-login">🔒 Portal Login</a>
+          <a
+            href="#"
+            class="sidebar-link hidden"
+            id="nav-logout"
+            style="color: var(--danger)"
+            >🚪 Logout</a
+          >
+        </div>
+
+   <div style="margin-top: auto; padding: 20px 15px">
+          <button id="theme-toggle-btn" class="theme-toggle-btn" style="margin-top: auto; margin-bottom: 15px">
+            <span class="theme-icon-wrapper">
+              <span class="theme-icon moon">🌙</span>
+              <span class="theme-icon sun">☀️</span>
+            </span>
+            <span class="theme-text">Dark Mode</span>
+          </button>
+
+          <button id="install-app-btn" class="theme-toggle-btn" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-color: #059669; margin-bottom: 15px;">
+            <span class="theme-icon-wrapper" style="width: auto; margin-right: 12px; font-size: 1.2rem;">
+              📱
+            </span>
+            <span class="theme-text" style="color: white;">Download App</span>
+          </button>
+        </div>
+      </nav>
+
+      <main class="main-content">
+        <section id="view-public" class="view active">
+          <div class="dashboard-header-container">
+            <div style="position: relative; z-index: 1">
+              <h2
+                class="gradient-text"
+                style="font-size: 2.2rem; margin-bottom: 0.2rem"
+              >
+                University Notice Board
+              </h2>
+              <p style="color: var(--text-muted); font-size: 1.05rem">
+                Welcome back! Here's what's happening on campus today.
+              </p>
+
+              <div style="margin-top: 1.5rem; position: relative">
+                <span
+                  style="
+                    position: absolute;
+                    left: 15px;
+                    top: 14px;
+                    font-size: 1.2rem;
+                  "
+                  >🔍</span
+                >
+                <input
+                  type="text"
+                  id="search-input"
+                  class="premium-search"
+                  placeholder="Search notices, assignments, or events..."
+                  style="
+                    width: 100%;
+                    padding: 15px 15px 15px 45px;
+                    font-size: 1rem;
+                    border-radius: 12px;
+                    border: 2px solid transparent;
+                    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+                    outline: none;
+                  "
+                />
+              </div>
+            </div>
+          </div>
+
+          <div
+            id="quick-poll-section"
+            style="display: none; margin-bottom: 2.5rem"
+          >
+            <h3 class="section-title title-gold">🏆 Campus Voice</h3>
+            <div class="premium-poll-container">
+              <h3
+                id="poll-question"
+                style="
+                  font-size: 1.2rem;
+                  margin-bottom: 1.5rem;
+                  color: var(--text-main);
+                  position: relative;
+                  z-index: 1;
+                "
+              >
+                Loading Poll...
+              </h3>
+              <div
+                id="poll-options-area"
+                style="position: relative; z-index: 1"
+              ></div>
+            </div>
+          </div>
+
+          <div
+            id="saved-notices-section"
+            style="display: none; margin-bottom: 2.5rem"
+          >
+            <h3 class="section-title title-gold">⭐ My Pinned Bookmarks</h3>
+            <div
+              class="saved-box notice-grid"
+              id="saved-notices-container"
+            ></div>
+          </div>
+
+<div id="student-queries-section" style="display: none; margin-bottom: 2.5rem;">
+            <h3 class="section-title title-gold">📬 My Direct Queries</h3>
+            <div id="student-queries-container" style="display: flex; flex-direction: column; gap: 15px;"></div>
+          </div>
+
+          <div
+            id="public-stats-section"
+            style="
+              margin-bottom: 2.5rem;
+              display: flex;
+              gap: 2rem;
+              flex-wrap: wrap;
+            "
+          >
+            <div
+              class="chart-card"
+              style="
+                flex: 1;
+                min-width: 300px;
+                padding: 1.5rem;
+                background: var(--card-bg);
+                border-radius: 16px;
+                border: 1px solid var(--border-color);
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+              "
+            >
+              <h3
+                class="section-title title-blue"
+                style="font-size: 1.2rem; margin-bottom: 1rem"
+              >
+                📈 Campus Attendance
+              </h3>
+              <div style="height: 260px">
+                <canvas id="publicChart"></canvas>
+              </div>
+            </div>
+
+            <div
+              class="chart-card"
+              style="
+                flex: 1;
+                min-width: 300px;
+                padding: 1.5rem;
+                background: var(--card-bg);
+                border-radius: 16px;
+                border: 1px solid var(--border-color);
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+              "
+            >
+              <h3
+                class="section-title title-gold"
+                style="font-size: 1.2rem; margin-bottom: 1rem"
+              >
+                🎯 Event Registrations
+              </h3>
+              <div style="height: 260px">
+                <canvas id="publicEventsChart"></canvas>
+              </div>
+            </div>
+          </div>
+
+<div id="office-hours-card" class="admin-panel hidden" style="margin-top: 2rem;">
+    <div style="display: flex; align-items: center; justify-content: space-between;">
+        <div>
+            <h3 style="margin-bottom: 5px;">Office Hours Status</h3>
+            <p id="status-text" style="font-weight: 700; transition: color 0.3s ease;">Currently: Offline</p>
+        </div>
+        
+        <label class="switch" id="faculty-toggle-wrapper">
+            <input type="checkbox" id="faculty-status-toggle">
+            <span class="slider"></span>
+        </label>
+
+   <button id="student-ask-btn" class="btn" style="background: var(--primary-color); color: white; display: none; align-items: center; gap: 8px;">
+            ✉️ Ask Faculty
+        </button>
+    </div>
+</div>
+
+          <h3 class="section-title title-blue">
+            📋 Campus Feed
+            <span
+              id="unread-badge"
+              style="
+                display: none;
+                background: var(--danger);
+                color: white;
+                border-radius: 12px;
+                padding: 2px 8px;
+                font-size: 0.8rem;
+                margin-left: 10px;
+              "
+            ></span>
+          </h3>
+          <div class="notice-grid" id="public-notices-container"></div>
+        </section>
+
+        <section id="view-login" class="view">
+          <div class="login-wrapper">
+            <div class="login-glass-card">
+              <div class="login-header">
+                <div class="login-icon-circle">🔒</div>
+                <h2 class="gradient-text">Welcome Back</h2>
+                <p>Enter your university credentials to access the portal.</p>
+              </div>
+
+              <form id="login-form" class="premium-form">
+                <div class="input-group">
+                  <label for="email">University Email</label>
+<div class="input-with-icon">
+                    <span>✉️</span>
+                  <input
+  type="email"
+  id="email"
+  placeholder="Enter your DPGU email"
+  pattern="[a-zA-Z0-9._%+\-]+@(dpgu|dgpu)\.edu" 
+  title="Please enter a valid university email address"
+  required
+/>
+                  </div>
+                </div>
+
+                <div class="input-group">
+                  <label for="password">Password</label>
+                  <div class="input-with-icon">
+                    <span>🔑</span>
+                    <input
+                      type="password"
+                      id="password"
+                      placeholder="••••••••"
+                      required
+                    />
+                  </div>
+                </div>
+
+<button type="submit" class="btn premium-login-btn">
+                  Secure Login ➔
+                </button>
+              </form>
+            </div>
+          </div>
+        </section> <section id="view-admin" class="view">
+       
+          <div class="dashboard-header-container" style="margin-bottom: 2rem">
+            <div style="position: relative; z-index: 1">
+              <h2
+                class="gradient-text"
+                style="font-size: 2.2rem; margin-bottom: 0.2rem"
+              >
+                Admin Dashboard
+              </h2>
+              <p style="color: var(--text-muted); font-size: 1.05rem">
+                Publish notices, manage live statistics, and review student
+                feedback.
+              </p>
+            </div>
+          </div>
+
+          <div class="admin-grid">
+            <div class="admin-panel">
+              <h3
+                class="section-title title-blue"
+                style="margin-bottom: 1.5rem"
+              >
+                📢 Publish New Notice
+              </h3>
+              <form id="notice-form" class="premium-form">
+                <div class="input-group">
+                  <label>Notice Title</label>
+                  <input
+                    type="text"
+                    id="notice-title"
+                    class="premium-input"
+                    placeholder="e.g., Mid-Term Exam Schedule"
+                    required
+                  />
+                </div>
+                <div class="input-group">
+                  <label>Category</label>
+                  <select id="notice-category" class="premium-input">
+                    <option value="General">📢 General</option>
+                    <option value="Urgent">🚨 Urgent</option>
+                    <option value="Event">📅 Event</option>
+                    <option value="Assignment">📝 Assignment</option>
+                    <option value="Syllabus">📚 Study</option>
+                    <option value="Sports and Play">🏏 Sports and Play</option>
+                    <option value="Cultural Function">
+                      💃 Cultural Function
+                    </option>
+                  </select>
+                </div>
+
+                <div class="input-group">
+                  <label>Detailed Content</label>
+                  <div
+                    id="editor-container"
+                    style="
+                      height: 250px;
+                      border-bottom-left-radius: 10px;
+                      border-bottom-right-radius: 10px;
+                      background: var(--bg-color);
+                    "
+                  ></div>
+                </div>
+
+                <div
+                  id="assignment-fields"
+                  style="
+                    display: none;
+                    background: rgba(59, 130, 246, 0.05);
+                    padding: 15px;
+                    border-radius: 8px;
+                    border: 1px dashed #bfdbfe;
+                    margin-bottom: 1rem;
+                  "
+                >
+                  <div class="input-group">
+                    <label>Submission Deadline</label>
+                    <input
+                      type="datetime-local"
+                      id="notice-deadline"
+                      class="premium-input"
+                    />
+                  </div>
+                  <div class="input-group" style="margin-bottom: 0">
+                    <label>Submission Link (Google Form, etc.)</label>
+                    <input
+                      type="url"
+                      id="notice-link"
+                      class="premium-input"
+                      placeholder="https://..."
+                    />
+                  </div>
+                </div>
+
+                <div
+                  class="input-group"
+                  style="
+                    margin-top: 1rem;
+                    border-top: 1px dashed var(--border-color);
+                    padding-top: 1.5rem;
+                  "
+                >
+                  <label>📎 Attach Resource Link (Google Drive, Dropbox)</label>
+                  <input
+                    type="url"
+                    id="notice-file-url"
+                    class="premium-input"
+                    placeholder="https://drive.google.com/..."
+                  />
+                </div>
+
+                <div class="input-group">
+                  <label>🕒 Schedule Post (Optional)</label>
+                  <input
+                    type="datetime-local"
+                    id="notice-scheduled-time"
+                    class="premium-input"
+                  />
+                  <small style="color: var(--text-muted); font-size: 0.85rem"
+                    >Leave blank to publish immediately.</small
+                  >
+                </div>
+
+                <label class="remember-me" style="margin-bottom: 1.5rem">
+                  <input type="checkbox" id="notice-rsvp" />
+                  <span style="font-weight: 600">Enable RSVP</span>
+                </label>
+
+                <button
+                  type="submit"
+                  class="btn premium-login-btn"
+                  style="
+                    background: linear-gradient(
+                      135deg,
+                      #3b82f6 0%,
+                      #2563eb 100%
+                    );
+                  "
+                >
+                  Publish to Dashboard ➔
+                </button>
+              </form>
+            </div>
+
+            <div class="admin-panel">
+              <h3
+                class="section-title title-gold"
+                style="margin-bottom: 1.5rem"
+              >
+                📊 Deploy Live Poll
+              </h3>
+              <form id="poll-form" class="premium-form">
+                <div class="input-group">
+                  <label>Poll Question</label>
+                  <input
+                    type="text"
+                    id="admin-poll-question"
+                    class="premium-input"
+                    required
+                  />
+                </div>
+                <div class="input-group">
+                  <label>Option 1</label
+                  ><input
+                    type="text"
+                    id="poll-opt-1"
+                    class="premium-input"
+                    required
+                  />
+                </div>
+                <div class="input-group">
+                  <label>Option 2</label
+                  ><input
+                    type="text"
+                    id="poll-opt-2"
+                    class="premium-input"
+                    required
+                  />
+                </div>
+                <div class="input-group">
+                  <label>Option 3 (Optional)</label
+                  ><input type="text" id="poll-opt-3" class="premium-input" />
+                </div>
+                <div class="input-group">
+                  <label>Option 4 (Optional)</label
+                  ><input type="text" id="poll-opt-4" class="premium-input" />
+                </div>
+                <button
+                  type="submit"
+                  class="btn premium-login-btn"
+                  style="
+                    background: linear-gradient(
+                      135deg,
+                      #f59e0b 0%,
+                      #d97706 100%
+                    );
+                  "
+                >
+                  Deploy to Students ➔
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <div class="admin-grid" style="margin-top: 2rem">
+            <div class="admin-panel">
+              <h3 style="text-align: center; margin-bottom: 1rem">
+                📈 Campus Attendance
+              </h3>
+              <div style="height: 200px; margin-bottom: 1.5rem">
+                <canvas id="adminChart"></canvas>
+              </div>
+              <form
+                id="update-chart-form"
+                style="
+                  display: flex;
+                  gap: 5px;
+                  flex-wrap: wrap;
+                  justify-content: center;
+                "
+              >
+                <input
+                  type="number"
+                  id="mon-att"
+                  class="premium-input"
+                  style="width: 60px; padding: 8px"
+                  placeholder="M"
+                  required
+                />
+                <input
+                  type="number"
+                  id="tue-att"
+                  class="premium-input"
+                  style="width: 60px; padding: 8px"
+                  placeholder="T"
+                  required
+                />
+                <input
+                  type="number"
+                  id="wed-att"
+                  class="premium-input"
+                  style="width: 60px; padding: 8px"
+                  placeholder="W"
+                  required
+                />
+                <input
+                  type="number"
+                  id="thur-att"
+                  class="premium-input"
+                  style="width: 60px; padding: 8px"
+                  placeholder="Th"
+                  required
+                />
+                <input
+                  type="number"
+                  id="fri-att"
+                  class="premium-input"
+                  style="width: 60px; padding: 8px"
+                  placeholder="F"
+                  required
+                />
+                <input
+                  type="number"
+                  id="sat-att"
+                  class="premium-input"
+                  style="width: 60px; padding: 8px"
+                  placeholder="S"
+                  required
+                />
+                <button
+                  type="submit"
+                  class="btn"
+                  style="background: #10b981; color: white"
+                >
+                  Update Live
+                </button>
+              </form>
+            </div>
+
+            <div class="admin-panel">
+              <h3 style="text-align: center; margin-bottom: 1rem">
+                🎯 Event Registrations
+              </h3>
+              <div style="height: 260px; margin-bottom: 1.5rem">
+                <canvas id="adminEventsChart"></canvas>
+              </div>
+              <form
+                id="update-events-form"
+                style="display: flex; gap: 10px; justify-content: center"
+              >
+                <input
+                  type="number"
+                  id="tech-val"
+                  class="premium-input"
+                  style="width: 80px"
+                  placeholder="Tech"
+                     min = "0"
+                  required
+                />
+                <input
+                  type="number"
+                  id="sports-val"
+                  class="premium-input"
+                  style="width: 80px"
+                  placeholder="Sports"
+                     min = "0"
+                  required
+                />
+                <input
+                  type="number"
+                  id="arts-val"
+                  class="premium-input"
+                  style="width: 80px"
+                  placeholder="Arts"
+                  min = "0"
+                  required
+                />
+                <button
+                  type="submit"
+                  class="btn"
+                  style="background: #10b981; color: white"
+                >
+                  Update
+                </button>
+              </form>
+            </div>
+          </div>
+<div style="margin-top: 3rem; margin-bottom: 2rem">
+            <h3 class="section-title title-blue">🗄️ Notice Management Inbox</h3>
+            <div id="admin-notices-list" class="admin-list-container"></div>
+          </div>
+
+          <div class="admin-card" style="margin-top: 2rem; margin-bottom: 2rem;">
+              <h3 class="section-title title-blue">💬 Notice Feedback Inbox</h3>
+              <div id="admin-feedback-list" class="admin-list-container">
+                  <p style="color: var(--text-muted); text-align: center; padding: 20px;">No new feedback from students.</p>
+              </div>
+          </div>
+          <div class="admin-card" style="margin-top: 2rem;">
+              <h3 class="section-title title-gold">📥 Direct Student Queries</h3>
+              <div id="admin-queries-list" class="admin-list-container">
+                  <p style="color: var(--text-muted); text-align: center; padding: 20px;">No new direct messages.</p>
+              </div>
+          </div>
+        </section>
+
+        <section id="view-vault" class="view">
+  <div class="dashboard-header-container">
+    <h2 class="gradient-text">My Resource Vault</h2>
+    <p>Every guide, document, and resource you've bookmarked, all in one place.</p>
+  </div>
+  
+  <div id="vault-empty-state" style="text-align: center; padding: 40px; display: none;">
+    <div style="font-size: 4rem; margin-bottom: 20px;">📂</div>
+    <h3>Your vault is empty</h3>
+    <p style="color: var(--text-muted);">Bookmark notices with attachments to see them here.</p>
+  </div>
+
+  <div class="notice-grid" id="vault-container">
+    </div>
+</section>
+
+
+      </main>
+    </div>
+
+    <div id="notice-modal" class="modal-overlay">
+      <div class="modal-content" style="max-width: 650px; position: relative;">
+        <span
+          class="close-modal-btn"
+          style="position: absolute; top: 20px; right: 25px; font-size: 2rem; cursor: pointer; color: var(--text-muted);"
+          onclick="document.getElementById('notice-modal').classList.remove('active')"
+        >&times;</span>
+        <div id="modal-content-area"></div>
+      </div>
+    </div>
+<div id="custom-install-modal" class="modal">
+      <div class="modal-content" style="max-width: 400px; padding: 30px; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.2);">
+        <div class="icon" style="font-size: 3rem; margin-bottom: 15px;">📱</div>
+        <h2 style="margin-bottom: 10px; color: var(--text-main);">Install Camp Connect</h2>
+        <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; margin-bottom: 20px;">
+          Get the ultimate campus experience directly on your home screen.
+        </p>
+        
+        <div class="features" style="background: rgba(59, 130, 246, 0.05); border: 1px dashed #bfdbfe; padding: 15px; border-radius: 12px; text-align: left; margin-bottom: 25px;">
+          <p style="margin-bottom: 8px; font-size: 0.9rem;">✨ <strong>One-Tap Access:</strong> No need to type the URL.</p>
+          <p style="margin-bottom: 8px; font-size: 0.9rem;">🚀 <strong>Faster Loading:</strong> Optimized for campus Wi-Fi.</p>
+          <p style="margin-bottom: 0; font-size: 0.9rem;">📴 <strong>Offline Mode:</strong> View pinned notices without internet.</p>
+        </div>
+        
+        <div class="buttons" style="display: flex; gap: 15px; justify-content: center;">
+          <button id="closeModal" class="btn" style="flex: 1; background: #e2e8f0; color: #475569;">Maybe Later</button>
+          <button id="confirmInstall" class="btn" style="flex: 1; background: #10b981; color: white; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);">Install App</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+
+    <script>
+      // PASTE YOUR FIREBASE CONFIGURATION HERE
+      const firebaseConfig = {
+        apiKey: "AIzaSyAT2NvCPxgNV0_Iw2kk5RLcHnv__fHAUNA",
+        authDomain: "camp-connect-f1a78.firebaseapp.com",
+        databaseURL:
+          "https://camp-connect-f1a78-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "camp-connect-f1a78",
+        storageBucket: "camp-connect-f1a78.firebasestorage.app",
+        messagingSenderId: "1035638109831",
+        appId: "1:1035638109831:web:d195c38f2f8a89cfb2ea22",
+      };
+      firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
+      const auth = firebase.auth();
+    </script>
+<script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js')
+            .then((reg) => console.log('Service Worker registered!', reg))
+            .catch((err) => console.log('Service Worker failed:', err));
+        });
+      }
+    </script>
+    <script src="script.js"></script>
+  </body>
+</html>
+
+
+
+
+
+
+
+
